@@ -1,0 +1,41 @@
+﻿@model FarmOnline.Models.ViewModel.OrderComfVM
+
+@{
+    ViewData["Title"] = "Customer Home";
+    Layout = "/Views/Shared/_CustomerLayout.cshtml";
+}
+
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header">
+            <h3>Order Confirmation</h3>
+        </div>
+        <div class="card-body">
+            <h4>Your order has been confirmed!</h4>
+            <p>Order ID: @Model.OrderHeader.Id</p>
+            <p>Order Date: @Model.OrderHeader.OrderDate.ToString("dd MMM yyyy")</p>
+            <p>Shipping Date: @Model.OrderHeader.ShippingDate.ToString("dd MMM yyyy")</p>
+            <p>Total Amount: @Model.OrderHeader.OrderTotal.ToString("c")</p>
+
+            <h4>Order Details</h4>
+            @foreach (var item in Model.OrderDetails)
+            {
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">@item.Product.Name</h5>
+                                <p class="card-text">Price: @item.Price</p>
+                                <p class="card-text">Quantity: @item.Count</p>
+                                <p class="card-text">Total: @(item.Count * item.Price)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <a asp-action="Index" asp-controller="Customer" class="btn btn-primary">Continue Shopping</a>
+        </div>
+    </div>
+</div>

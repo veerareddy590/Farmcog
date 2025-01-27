@@ -1,0 +1,41 @@
+﻿@model IEnumerable<FarmOnline.Models.ViewModel.OrderComfVM>
+
+@{
+    ViewData["Title"] = "Orders";
+    Layout = "/Views/Shared/_CustomerLayout.cshtml";
+}
+
+
+<div class="container mt-5">
+    <h2>Your Orders</h2>
+    @foreach (var orderVM in Model)
+    {
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>Order ID: @orderVM.OrderHeader.Id</h5>
+                    <p>Order Date: @orderVM.OrderHeader.OrderDate.ToString("dd MMM yyyy")</p>
+                    <p>Total Amount: @orderVM.OrderHeader.OrderTotal.ToString("c")</p>
+                    <p>Order Status: @(orderVM.OrderHeader.OrderStatus == 0 ? "Cancelled" : "Confirmed")</p>
+                </div>
+                <div class="card-body">
+                    <h6>Order Details</h6>
+                @foreach (var detail in orderVM.OrderDetails)
+                {
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">@detail.Product.Name</h5>
+                                            <p class="card-text">Price: @detail.Price</p>
+                                            <p class="card-text">Quantity: @detail.Count</p>
+                                            <p class="card-text">Total: @(detail.Count * detail.Price)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                }
+                </div>
+            </div>
+    }
+</div>
+

@@ -1,0 +1,17 @@
+﻿@model FarmOnline.Models.User
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+<form  method="post">
+    <div>
+        <label>Username</label>
+        <input type="text" asp-for="UserId" />
+    </div>
+    <div>
+        <label>Password</label>
+        <input type="password" asp-for="Password" />
+    </div>
+    <button type="submit">Login</button>
+</form>

@@ -1,0 +1,43 @@
+﻿@model FarmOnline.Models.ViewModel.SummaryVM
+
+@{
+    ViewData["Title"] = "Customer Home";
+    Layout = "/Views/Shared/_CustomerLayout.cshtml";
+}
+
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header">
+            <h3>Order Summary</h3>
+        </div>
+        <div class="card-body">
+            <h4>Shipping Address</h4>
+            <p>@Model.Address.StreetAddress</p>
+            <p>@Model.Address.City, @Model.Address.State, @Model.Address.PostalCode</p>
+
+            <h4>Cart Items</h4>
+            @foreach (var item in Model.CartItems)
+            {
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">@item.Product.Name</h5>
+                                <p class="card-text">Price: @item.Product.Price</p>
+                                <p class="card-text">Quantity: @item.count</p>
+                                <p class="card-text">Total: @(item.count * item.Product.Price)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <h4>Total Amount: @Model.TotalAmount.ToString("c")</h4>
+
+            <form asp-action="PlaceOrder" method="post">
+                <button type="submit" class="btn btn-success">Place Order</button>
+            </form>
+        </div>
+    </div>
+</div>

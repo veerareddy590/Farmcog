@@ -1,0 +1,42 @@
+﻿@model Address
+
+@{
+    ViewData["Title"] = "Enter Address";
+    Layout = "/Views/Shared/farmheader.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header">
+            <h3>Enter Address</h3>
+        </div>
+        <div class="card-body">
+            <form method="post" >
+                <div class="mb-3">
+                    <label asp-for="StreetAddress" class="form-label"></label>
+                    <input asp-for="StreetAddress" class="form-control" />
+                    <span asp-validation-for="StreetAddress" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="City" class="form-label"></label>
+                    <input asp-for="City" class="form-control" />
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="State" class="form-label"></label>
+                    <input asp-for="State" class="form-control" />
+                    <span asp-validation-for="State" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="PostalCode" class="form-label"></label>
+                    <input asp-for="PostalCode" class="form-control" />
+                    <span asp-validation-for="PostalCode" class="text-danger"></span>
+                </div>
+                <div class="mb-3 d-flex justify-content-start">
+                    <a asp-controller="Customer" asp-action="Summary"><button type="submit"  class="btn btn-success me-2">Submit</button></a>
+                    <a class="btn btn-secondary" asp-controller="Cart" asp-action="Index">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
