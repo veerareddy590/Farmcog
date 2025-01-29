@@ -96,8 +96,7 @@ namespace FarmOnline.Controllers
         [HttpPost]
         public IActionResult Address(Address Address) {
             var userId = HttpContext.Session.GetString("UserId");
-            var Id= Address.Id;
-            var addresslist = unitofWork.address.GetFirstOrDefault(u => u.Id == Id);
+            var addresslist = unitofWork.address.GetFirstOrDefault(u => u.UserId == userId);
             if (addresslist == null) {
                 Address.UserId = userId;
                 unitofWork.address.Add(Address);
@@ -106,13 +105,19 @@ namespace FarmOnline.Controllers
             }
             else
             {
-                Address.UserId = userId;
-                unitofWork.address.update(Address);
+                
+                addresslist.StreetAddress = Address.StreetAddress;
+                addresslist.State = Address.State;
+                addresslist.City = Address.City;
+                addresslist.PostalCode = Address.PostalCode;
+                unitofWork.address.update(addresslist);
+                unitofWork.save();
                 return RedirectToAction("Summary","Customer");
             }
             
 
         }
+
 
         public IActionResult Summary()
         {

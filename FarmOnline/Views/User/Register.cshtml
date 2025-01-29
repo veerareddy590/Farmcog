@@ -23,78 +23,133 @@
     <style>
         html, body {
             height: 100%;
+            font-size: 16px;
+            background-image: url('/Images/Screenshot 2025-01-27 173230.png'); /* Background image */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
         }
 
         .container {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100%;
+            min-height: 100vh;
+            padding: 20px;
         }
 
         .card {
             width: 100%;
-            max-width: 500px;
-            margin: 10px;
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.4); /* Decreased opacity */
+        }
+
+        .card-header {
+            background-color: #28a745; /* Thick green */
+            border-radius: 0.25rem 0.25rem 0 0;
+            margin-bottom: 20px; /* Added spacing */
         }
 
         .btn-primary {
+            background-color: #28a745; /* Thick green */
+            border-color: #28a745; /* Thick green */
             transition: background-color 0.3s ease;
         }
 
             .btn-primary:hover {
-                background-color: #0056b3;
+                background-color: #218838; /* Slightly darker green */
             }
+
+        .form-group {
+            margin-bottom: 20px; /* Increased spacing */
+        }
+
+        .form-control {
+            padding: 8px;
+            font-size: 0.875rem;
+        }
+
+        .card-footer {
+            text-align: center;
+        }
+
+            .card-footer a {
+                color: #007bff;
+                text-decoration: none;
+            }
+
+                .card-footer a:hover {
+                    text-decoration: underline;
+                }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="card">
-            <div class="card-header text-center bg-primary text-white py-2">
+        <div class="card shadow-sm">
+            <div class="card-header text-white text-center py-3">
                 <h2 class="h4">Register</h2>
             </div>
             <div class="card-body p-3">
                 <form method="post" action="Register">
-                    <div class="form-group">
-                        <label asp-for="UserId" class="control-label"></label>
-                        <input asp-for="UserId" class="form-control" />
-                        <span asp-validation-for="UserId" class="text-danger"></span>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="UserId" class="control-label"></label>
+                                <input asp-for="UserId" class="form-control" placeholder="Username" />
+                                <span asp-validation-for="UserId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="UserName" class="control-label"></label>
+                                <input asp-for="UserName" class="form-control" placeholder="Full Name" />
+                                <span asp-validation-for="UserName" class="text-danger"></span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label asp-for="UserName" class="control-label"></label>
-                        <input asp-for="UserName" class="form-control" />
-                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Email" class="control-label"></label>
+                                <input asp-for="Email" class="form-control" type="email" placeholder="Email" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Mobile" class="control-label"></label>
+                                <input asp-for="Mobile" class="form-control" type="tel" placeholder="Mobile" />
+                                <span asp-validation-for="Mobile" class="text-danger"></span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label asp-for="Email" class="control-label"></label>
-                        <input asp-for="Email" class="form-control" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Mobile" class="control-label"></label>
-                        <input asp-for="Mobile" class="form-control" />
-                        <span asp-validation-for="Mobile" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Password" class="control-label"></label>
-                        <input asp-for="Password" type="password" class="form-control" />
-                        <span asp-validation-for="Password" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Roles" class="control-label"></label>
-                        <select asp-for="Roles" class="form-control">
-                            <option value="Farmer">Farmer</option>
-                            <option value="Customer">Customer</option>
-                        </select>
-                        <span asp-validation-for="Roles" class="text-danger"></span>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Password" class="control-label"></label>
+                                <input asp-for="Password" type="password" class="form-control" placeholder="Password" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Roles" class="control-label"></label>
+                                <select asp-for="Roles" class="form-control">
+                                    <option value="Farmer">Farmer</option>
+                                    <option value="Customer">Customer</option>
+                                </select>
+                                <span asp-validation-for="Roles" class="text-danger"></span>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group text-center">
                         <button type="submit" class="btn btn-primary btn-block">Register</button>
                     </div>
                 </form>
             </div>
-            <div class="card-footer text-center py-2">
-                <p class="mb-0">Already have an account? <a asp-controller="" asp-action="" class="text-primary">Login here</a></p>
+            <div class="card-footer">
+                <p class="mb-0">Already have an account? <a asp-controller="User" asp-action="Login">Login here</a></p>
             </div>
         </div>
     </div>

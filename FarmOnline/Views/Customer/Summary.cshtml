@@ -1,43 +1,79 @@
 ﻿@model FarmOnline.Models.ViewModel.SummaryVM
 
 @{
-    ViewData["Title"] = "Customer Home";
+    ViewData["Title"] = "Order Summary";
     Layout = "/Views/Shared/_CustomerLayout.cshtml";
 }
 
-
-<div class="container mt-5">
-    <div class="card">
-        <div class="card-header">
-            <h3>Order Summary</h3>
+<div class="container py-5">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-black text-white d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">Order Summary</h3>
+            <a asp-action="Cart" class="btn btn-outline-light btn-sm">Back to Cart</a>
         </div>
         <div class="card-body">
-            <h4>Shipping Address</h4>
-            <p>@Model.Address.StreetAddress</p>
-            <p>@Model.Address.City, @Model.Address.State, @Model.Address.PostalCode</p>
+            <div class="row">
+                <!-- Address Form Section -->
+                <div class="col-md-6 border-end">
+                    <h4 class="text-primary mb-4">Delivery Address</h4>
+                    <form asp-action="Address" method="post">
+                        <div class="mb-3">
+                            <label asp-for="Address.StreetAddress" class="form-label">Street Address</label>
+                            <input asp-for="Address.StreetAddress" class="form-control" placeholder="Enter street address" />
+                            <span asp-validation-for="Address.StreetAddress" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Address.City" class="form-label">City</label>
+                            <input asp-for="Address.City" class="form-control" placeholder="Enter city" />
+                            <span asp-validation-for="Address.City" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Address.State" class="form-label">State</label>
+                            <input asp-for="Address.State" class="form-control" placeholder="Enter state" />
+                            <span asp-validation-for="Address.State" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Address.PostalCode" class="form-label">Postal Code</label>
+                            <input asp-for="Address.PostalCode" class="form-control" placeholder="Enter postal code" />
+                            <span asp-validation-for="Address.PostalCode" class="text-danger"></span>
+                        </div>
+                        <button type="submit" class="btn btn-success">Save Address</button>
+                    </form>
+                </div>
 
-            <h4>Cart Items</h4>
-            @foreach (var item in Model.CartItems)
-            {
-                <div class="row mb-3">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">@item.Product.Name</h5>
-                                <p class="card-text">Price: @item.Product.Price</p>
-                                <p class="card-text">Quantity: @item.count</p>
-                                <p class="card-text">Total: @(item.count * item.Product.Price)</p>
+                <!-- Order Summary Section -->
+                <div class="col-md-6">
+                    <h4 class="text-primary mb-3">Order Summary</h4>
+                    @foreach (var item in Model.CartItems)
+                    {
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="d-flex align-items-center">
+                                <img src="@item.Product.Image" alt="@item.Product.Name" class="img-fluid rounded shadow-sm me-3" style="width: 80px; height: 80px; object-fit: cover;">
+                                <div>
+                                    <h6 class="mb-0">@item.Product.Name</h6>
+                                    <p class="mb-0 text-muted">Quantity: @item.count</p>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="mb-0">@item.Product.Price.ToString("c")</p>
                             </div>
                         </div>
+                    }
+
+                    <div class="mt-4">
+                        <h5 class="text-end text-dark">Total Cost: <span class="text-primary">@Model.TotalAmount.ToString("c")</span></h5>
                     </div>
                 </div>
-            }
+            </div>
 
-            <h4>Total Amount: @Model.TotalAmount.ToString("c")</h4>
-
-            <form asp-action="PlaceOrder" method="post">
-                <button type="submit" class="btn btn-success">Place Order</button>
-            </form>
+            <!-- Place Order Button -->
+            <div class="text-center mt-4">
+                <form asp-action="PlaceOrder" method="post">
+                    <button type="submit" class="btn btn-success btn-lg px-5">
+                        Place Order
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </div>

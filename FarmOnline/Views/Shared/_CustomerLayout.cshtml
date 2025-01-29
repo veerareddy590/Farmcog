@@ -10,7 +10,7 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-success border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">FarmOnline</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -26,13 +26,17 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Order" asp-action="Order">Order</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="Cart" >Cart</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="Cart">Cart</a>
                         </li>
-                        
+                    </ul>
+                    <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Customer" asp-action="Cart">
-                                <i class="bi bi-cart"></i> &nbsp; (0)
-                            </a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Account" asp-action="Logout">Profile</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
                         </li>
                     </ul>
                 </div>
@@ -56,4 +60,8 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+
+
+
 
