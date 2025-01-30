@@ -10,6 +10,9 @@ namespace FarmOnline.Repositories.IRepository
 
         IEnumerable<OrderHeader> GetAllWithDetails();
 
+        Task<OrderHeader> GetFirstOrDefaultAsync(Expression<Func<OrderHeader, bool>> filter, string includeProperties = null);
+
+
 
     }
 }

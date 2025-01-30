@@ -1,4 +1,5 @@
 using FarmOnline.Models;
+using FarmOnline.Repositories.IRepository;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -7,21 +8,23 @@ namespace FarmOnline.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        public IUnitofWork _unitofWork;
+        public HomeController(ILogger<HomeController> logger,IUnitofWork unitofWork)
         {
             _logger = logger;
+            _unitofWork = unitofWork;
         }
 
         public IActionResult Index()
         {
-            return View();
+            IEnumerable<Product> productList = _unitofWork.product.Getproducts(includeProperties: "Category");
+            return View(productList);
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        //public IActionResult Privacy()
+        //{
+        //    return View();
+        //}
 
         //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         //public IActionResult Error()

@@ -14,5 +14,7 @@ namespace FarmOnline.Repositories.IRepository
         T search(T entity);
 
         T GetFirstOrDefault(Expression<Func<T, bool>> filter);
+
+        IEnumerable<T> GatAll(Expression<Func<T, bool>>? filter, string? includeProperties = null);
     }
 }

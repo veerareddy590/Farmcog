@@ -19,14 +19,14 @@ namespace FarmOnline.Models
 
         public double OrderTotal { get; set; }
 
-        public int OrderStatus { get; set; } = 0;
+        public string OrderStatus { get; set; } = "PlacedOrder"; 
 
         public int PaymentStatus { get; set; }
 
         public string? PaymentIntentId { get; set; }
 
         [ValidateNever]
-        public User User { get; set; }
+        public ApplicationUser User { get; set; }
 
         public ICollection<OrderDetail> OrderDetails { get; set; }
     }

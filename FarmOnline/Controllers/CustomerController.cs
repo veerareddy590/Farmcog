@@ -2,17 +2,22 @@
 using FarmOnline.Models.ViewModel;
 using FarmOnline.Repositories;
 using FarmOnline.Repositories.IRepository;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FarmOnline.Controllers
 {
+    [Authorize(Roles = "Customer")]
     public class CustomerController : Controller
     {
         public IUnitofWork unitofWork;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public CustomerController(IUnitofWork unitofWork)
+        public CustomerController(IUnitofWork unitofWork, UserManager<IdentityUser> userManager)
         {
             this.unitofWork = unitofWork;
+            _userManager = userManager;
         }
         public IActionResult Index()
         {
@@ -20,9 +25,10 @@ namespace FarmOnline.Controllers
             return View(productList);
         }
         [HttpPost]
-        public IActionResult AddToCart(int productId)
+        public async Task<IActionResult> AddToCart(int productId)
         {
-            var userId = HttpContext.Session.GetString("UserId");
+            var user = await _userManager.GetUserAsync(User) as ApplicationUser;
+            var userId = user.Id;
             var cartItem = unitofWork.Cart.GetFirstOrDefault(c => c.ProductId == productId && c.CustomerId == userId);
             if (cartItem == null)
             {
@@ -41,17 +47,19 @@ namespace FarmOnline.Controllers
             return RedirectToAction("Cart","Customer");
         }
 
-        public IActionResult Cart()
+        public async Task<IActionResult> Cart()
         {
-            var userId = HttpContext.Session.GetString("UserId");
+            var user = await _userManager.GetUserAsync(User) as ApplicationUser;
+            var userId = user.Id;
             var cartItems = unitofWork.Cart.Getcart(c => c.CustomerId == userId, includeProperties: "Product");
             return View(cartItems);
         }
 
         [HttpPost]
-        public IActionResult UpdateCart(int productId, string action)
+        public async Task<IActionResult> UpdateCart(int productId, string action)
         {
-            var userId = HttpContext.Session.GetString("UserId");
+            var user = await _userManager.GetUserAsync(User) as ApplicationUser;
+            var userId = user.Id;
             var cartItem = unitofWork.Cart.GetFirstOrDefault(c => c.ProductId == productId && c.CustomerId == userId);
             if (cartItem != null)
             {
@@ -69,9 +77,10 @@ namespace FarmOnline.Controllers
         }
 
         [HttpPost]
-        public IActionResult RemoveFromCart(int productId)
+        public async Task<IActionResult> RemoveFromCart(int productId)
         {
-            var userId = HttpContext.Session.GetString("UserId");
+            var user = await _userManager.GetUserAsync(User) as ApplicationUser;
+            var userId = user.Id;
             var cartItem = unitofWork.Cart.GetFirstOrDefault(c => c.ProductId == productId && c.CustomerId == userId);
             if (cartItem != null)
             {
@@ -81,9 +90,10 @@ namespace FarmOnline.Controllers
             return RedirectToAction("Cart");
         }
 
-        public IActionResult Address()
+        public async Task<IActionResult> Address()
         {
-            var userId = HttpContext.Session.GetString("UserId");
+            var user = await _userManager.GetUserAsync(User) as ApplicationUser;
+            var userId = user.Id;
             var address= unitofWork.address.GetFirstOrDefault(u=>u.UserId == userId);
             if(address != null)
             {
@@ -94,8 +104,9 @@ namespace FarmOnline.Controllers
         }
 
         [HttpPost]
-        public IActionResult Address(Address Address) {
-            var userId = HttpContext.Session.GetString("UserId");
+        public async Task<IActionResult> Address(Address Address) {
+            var user = await _userManager.GetUserAsync(User) as ApplicationUser;
+            var userId = user.Id;
             var addresslist = unitofWork.address.GetFirstOrDefault(u => u.UserId == userId);
             if (addresslist == null) {
                 Address.UserId = userId;
@@ -119,9 +130,10 @@ namespace FarmOnline.Controllers
         }
 
 
-        public IActionResult Summary()
+        public async Task<IActionResult> Summary()
         {
-            var userId = HttpContext.Session.GetString("UserId");
+            var user = await _userManager.GetUserAsync(User) as ApplicationUser;
+            var userId = user.Id;
             var address = unitofWork.address.GetFirstOrDefault(u => u.UserId == userId);
             var cartItems = unitofWork.Cart.Getcart(c => c.CustomerId == userId, includeProperties: "Product");
 
@@ -136,9 +148,10 @@ namespace FarmOnline.Controllers
         }
 
         [HttpPost]
-        public IActionResult PlaceOrder()
+        public async Task<IActionResult> PlaceOrder()
         {
-            var userId = HttpContext.Session.GetString("UserId");
+            var user = await _userManager.GetUserAsync(User) as ApplicationUser;
+            var userId = user.Id;
             var cartItems = unitofWork.Cart.Getcart(c => c.CustomerId == userId, includeProperties: "Product");
             var address = unitofWork.address.GetFirstOrDefault(u => u.UserId == userId);
 
@@ -154,7 +167,7 @@ namespace FarmOnline.Controllers
                 OrderDate = DateTime.Now,
                 ShippingDate = DateTime.Now.AddDays(3), // Example shipping date
                 OrderTotal = cartItems.Sum(item => item.count * item.Product.Price),
-                OrderStatus = 1, // Example status
+                OrderStatus = "PlacedOrder", // Example status
                 PaymentStatus = 1 // Example payment status
             };
 

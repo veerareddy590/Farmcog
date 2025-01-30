@@ -25,7 +25,7 @@ namespace FarmOnline.Models
         public string UserId { get; set; }
 
         [ValidateNever]
-        public User User { get; set; }
+        public ApplicationUser User { get; set; }
 
     }
 }

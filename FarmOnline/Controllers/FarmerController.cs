@@ -3,32 +3,77 @@ using FarmOnline.Models;
 using FarmOnline.Models.ViewModel;
 using FarmOnline.Repositories;
 using FarmOnline.Repositories.IRepository;
+using Microsoft.AspNetCore.Authorization; 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace FarmOnline.Controllers
 {
+    [Authorize(Roles ="Farmer")]
     public class FarmerController : Controller
     {
         public IUnitofWork unitofWork;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public FarmerController(IUnitofWork unitofWork, IWebHostEnvironment _webHostEnvironment)
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly HttpClient _httpClient;
+        private readonly string _apiBaseUrl = "https://localhost:7088/api/Categories";
+
+        public FarmerController(IUnitofWork unitofWork, IWebHostEnvironment _webHostEnvironment, UserManager<IdentityUser> userManager)
         {
             this.unitofWork = unitofWork;
             this._webHostEnvironment = _webHostEnvironment;
+            _userManager = userManager;
+            _httpClient = new HttpClient();
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            ViewBag.farmer = HttpContext.Session.GetString("UserId");
+            var user = await _userManager.GetUserAsync(User) as ApplicationUser;
+            if (user == null)
+            {
+                return NotFound();
+            }
+            var farmerId = user.Id;
+
+            var totalproducts =  unitofWork.productFarmer.GatAll(u=>u.FarmerId==farmerId).Count();
+
+            var totalOrders = unitofWork.orderHeader.GetAllWithDetails()
+                .Where(o => o.OrderDetails.Any(od => od.Product.productFarmers.Any(pf => pf.FarmerId == farmerId))).Count();
+
+
+            var totalOrdersShipped = unitofWork.orderHeader.GetAllWithDetails()
+                .Where(o => o.OrderStatus == "Shipped" && o.OrderDetails.Any(od => od.Product.productFarmers.Any(pf => pf.FarmerId == farmerId))).Count();
+
+            var totalOrdersPending = unitofWork.orderHeader.GetAllWithDetails()
+                .Where(o => o.OrderStatus == "Pending" && o.OrderDetails.Any(od => od.Product.productFarmers.Any(pf => pf.FarmerId == farmerId))).Count();
+
+            var totalOrdersPlaced = unitofWork.orderHeader.GetAllWithDetails()
+                .Where(o => o.OrderStatus == "PlacedOrder" && o.OrderDetails.Any(od => od.Product.productFarmers.Any(pf => pf.FarmerId == farmerId))).Count();
+
+            var dashboardVM = new FarmerDashVM
+            {
+                TotalProducts = totalproducts,
+                TotalOrders = totalOrders,
+                TotalOrdersShipped = totalOrdersShipped,
+                TotalOrdersPending = totalOrdersPending,
+                TotalOrdersPlaced = totalOrdersPlaced
+            };
+
+            return View(dashboardVM);
+
 
             return View();
         }
 
         [HttpGet]
-        public IActionResult Product()
+        public async Task<IActionResult> Product()
         {
-            var farmerId = HttpContext.Session.GetString("UserId");
+            
+
+            var user = await _userManager.GetUserAsync(User) as ApplicationUser;
+            var farmerId = user.Id;
             var allproducts = unitofWork.product.GetAll();
             var prodcutid = unitofWork.productFarmer.GetAll().Where(x => x.FarmerId == farmerId);
             var products = (from product in allproducts
@@ -39,10 +84,17 @@ namespace FarmOnline.Controllers
         }
 
         [HttpGet]
-        public IActionResult UploadProduct()
+        public async Task<IActionResult> UploadProduct()
         {
-            IEnumerable<Category> categories = (IEnumerable<Category>)unitofWork.category.Getall();
-            if (categories == null)
+            var response = await _httpClient.GetAsync(_apiBaseUrl);
+            IEnumerable<Category> categorieslist = new List<Category>();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonData = await response.Content.ReadAsStringAsync();
+                categorieslist = JsonConvert.DeserializeObject<IEnumerable<Category>>(jsonData);
+            }
+            if (categorieslist == null)
             {
 
                 return View("Error");
@@ -50,7 +102,7 @@ namespace FarmOnline.Controllers
 
             ProductVM productVM = new()
             {
-                CategoryList = categories.Select(u => new SelectListItem
+                CategoryList = categorieslist.Select(u => new SelectListItem
                 {
                     Text = (string)u.CategoryName,
                     Value = u.CategoryId.ToString()
@@ -62,7 +114,7 @@ namespace FarmOnline.Controllers
         }
 
         [HttpPost]
-        public IActionResult UploadProduct(ProductVM obj, IFormFile? file)
+        public async Task<IActionResult> UploadProduct(ProductVM obj, IFormFile? file)
         {
             if (ModelState.IsValid)
             {
@@ -84,14 +136,33 @@ namespace FarmOnline.Controllers
                 }
                 unitofWork.product.Add(obj.Product);
                 unitofWork.save();
-                obj.ProductFarmer.FarmerId = HttpContext.Session.GetString("UserId");
+                var user = await _userManager.GetUserAsync(User) as ApplicationUser;
+                obj.ProductFarmer.FarmerId = user.Id;
 
                 obj.ProductFarmer.ProductId = obj.Product.ProductId;
                 unitofWork.productFarmer.Add(obj.ProductFarmer);
                 unitofWork.save();
                 return RedirectToAction("Product", "Farmer");
             }
-            return View();
+            var response = await _httpClient.GetAsync(_apiBaseUrl);
+            IEnumerable<Category> categorieslist = new List<Category>();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonData = await response.Content.ReadAsStringAsync();
+                categorieslist = JsonConvert.DeserializeObject<IEnumerable<Category>>(jsonData);
+            }
+            if (categorieslist == null)
+            {
+
+                return View("Error");
+            }
+            obj.CategoryList = categorieslist.Select(u => new SelectListItem
+            {
+                Text = (string)u.CategoryName,
+                Value = u.CategoryId.ToString()
+            });
+            return View(obj);
         }
 
         [HttpGet]
@@ -173,7 +244,7 @@ namespace FarmOnline.Controllers
         }
 
         [HttpPost]
-        public IActionResult DeleteProduct(ProductVM obj, IFormFile? file)
+        public async Task<IActionResult> DeleteProduct(ProductVM obj, IFormFile? file)
         {
             if (ModelState.IsValid)
             {
@@ -192,8 +263,9 @@ namespace FarmOnline.Controllers
                 {
                     obj.ProductFarmer = new ProductFarmer();
                 }
+                var user = await _userManager.GetUserAsync(User) as ApplicationUser;
 
-                obj.ProductFarmer.FarmerId = HttpContext.Session.GetString("UserId");
+                obj.ProductFarmer.FarmerId = user.Id;
                 obj.ProductFarmer.ProductId = obj.Product.ProductId;
 
                 // Retrieve the ProductFarmer entity from the database

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FarmOnline.Repositories
 {
-    public class CUser : CRepository<User>, IUser
+    public class CUser : CRepository<ApplicationUser>, IUser
     {
         ApplicationDbContext db;
         public CUser(ApplicationDbContext db) : base(db)
@@ -12,9 +12,9 @@ namespace FarmOnline.Repositories
             this.db = db;
         }
 
-        public User searchLogin(string entity)
+        public ApplicationUser searchLogin(string entity)
         {
-            DbSet<User> users = db.user;
+            DbSet<ApplicationUser> users = db.applicationUsers;
             return users.Find(entity);
         }
     }

@@ -1,10 +1,54 @@
-﻿
+﻿@model FarmOnline.Models.ViewModel.FarmerDashVM
 
 @{
-    ViewData["Title"] = "Farmer";
+    ViewData["Title"] = "Farmer Dashboard";
     Layout = "/Views/Shared/farmheader.cshtml";
 }
-@model User
 
-<h1>Hi Farmer</h1>
-<h1>@ViewBag.farmer</h1>
+<div class="container mt-5">
+    <h2>Farmer Dashboard</h2>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">Total Products</div>
+                <div class="card-body">
+                    <h5 class="card-title">@Model.TotalProducts</h5>
+                    <a href="@Url.Action("Product", "Farmer")" class="btn btn-light">Manage Products</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-secondary mb-3">
+                <div class="card-header">Total Orders</div>
+                <div class="card-body">
+                    <h5 class="card-title">@Model.TotalOrders</h5>
+                    <a href="@Url.Action("OrderFarmer", "Order")" class="btn btn-light">Manage Orders</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">Total Orders Shipped</div>
+                <div class="card-body">
+                    <h5 class="card-title">@Model.TotalOrdersShipped</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-header">Total Orders Pending</div>
+                <div class="card-body">
+                    <h5 class="card-title">@Model.TotalOrdersPending</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-header">Total Orders Placed</div>
+                <div class="card-body">
+                    <h5 class="card-title">@Model.TotalOrdersPlaced</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

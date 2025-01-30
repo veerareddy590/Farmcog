@@ -49,5 +49,20 @@ namespace FarmOnline.Repositories
                 .ToList();
         }
 
+        public async Task<OrderHeader> GetFirstOrDefaultAsync(Expression<Func<OrderHeader, bool>> filter, string includeProperties = null)
+        {
+            IQueryable<OrderHeader> query = dbset;
+
+            if (includeProperties != null)
+            {
+                foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProperty);
+                }
+            }
+
+            return await query.FirstOrDefaultAsync(filter);
+        }
+
     }
 }

@@ -31,6 +31,6 @@ namespace FarmOnline.Models
         public Product Product { get; set; }
 
         [ValidateNever]
-        public User User { get; set; }
+        public ApplicationUser User { get; set; }
     }
 }

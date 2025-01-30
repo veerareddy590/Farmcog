@@ -41,6 +41,24 @@ namespace FarmOnline.Repositories
             return dbset.FirstOrDefault(filter);
         }
 
-        
+        public IEnumerable<T> GatAll(Expression<Func<T, bool>>? filter, string? includeProperties = null)
+        {
+            IQueryable<T> query = dbset;
+            //IQueryable<T> query = dbSet.AsNoTracking();
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var includeProp in includeProperties
+                    .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProp);
+                }
+            }
+            return query.ToList();
+        }
+
     }
 }

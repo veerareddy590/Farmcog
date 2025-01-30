@@ -5,37 +5,69 @@
     Layout = "/Views/Shared/_CustomerLayout.cshtml";
 }
 
-
 <div class="container mt-5">
-    <h2>Your Orders</h2>
+    <h2 class="mb-4">Your Orders</h2>
     @foreach (var orderVM in Model)
     {
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h5>Order ID: @orderVM.OrderHeader.Id</h5>
-                    <p>Order Date: @orderVM.OrderHeader.OrderDate.ToString("dd MMM yyyy")</p>
-                    <p>Total Amount: @orderVM.OrderHeader.OrderTotal.ToString("c")</p>
-                    <p>Order Status: @(orderVM.OrderHeader.OrderStatus == 0 ? "Cancelled" : "Confirmed")</p>
-                </div>
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#order-@orderVM.OrderHeader.Id" aria-expanded="false" aria-controls="order-@orderVM.OrderHeader.Id">
+                        Order ID: @orderVM.OrderHeader.Id
+                    </button>
+                </h5>
+                <p class="mb-1">Order Date: @orderVM.OrderHeader.OrderDate.ToString("dd MMM yyyy")</p>
+                <p class="mb-1">Total Amount: @orderVM.OrderHeader.OrderTotal.ToString("c")</p>
+                
+                <p class="mb-0">Order Status: @orderVM.OrderHeader.OrderStatus</p>
+            </div>
+            <div id="order-@orderVM.OrderHeader.Id" class="collapse">
                 <div class="card-body">
                     <h6>Order Details</h6>
-                @foreach (var detail in orderVM.OrderDetails)
-                {
-                            <div class="row mb-3">
-                                <div class="col-12">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h5 class="card-title">@detail.Product.Name</h5>
-                                            <p class="card-text">Price: @detail.Price</p>
-                                            <p class="card-text">Quantity: @detail.Count</p>
-                                            <p class="card-text">Total: @(detail.Count * detail.Price)</p>
-                                        </div>
+                    <div class="row">
+                        @foreach (var detail in orderVM.OrderDetails)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">@detail.Product.Name</h5>
+                                        <p class="card-text">Price: @detail.Price.ToString("c")</p>
+                                        <p class="card-text">Quantity: @detail.Count</p>
+                                        <p class="card-text">Total: @((detail.Count * detail.Price).ToString("c"))</p>
                                     </div>
                                 </div>
                             </div>
-                }
+                        }
+                    </div>
                 </div>
             </div>
+        </div>
     }
 </div>
+
+<!-- Custom CSS -->
+<style>
+    .card-header {
+        background-color: #f8f9fa;
+        cursor: pointer;
+    }
+
+        .card-header h5 button {
+            text-decoration: none;
+            color: #000;
+        }
+
+            .card-header h5 button:hover {
+                color: #28a745;
+            }
+
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+</style>
 

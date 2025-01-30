@@ -2,8 +2,8 @@
 
 namespace FarmOnline.Repositories.IRepository
 {
-    public interface IUser :  IRepository<User>
+    public interface IUser :  IRepository<ApplicationUser>
     {
-        User searchLogin(String entity);
+        ApplicationUser searchLogin(String entity);
     }
 }

@@ -1,6 +1,5 @@
 ﻿@model IEnumerable<FarmOnline.Models.ViewModel.OrderComfVM>
 
-
 @{
     ViewData["Title"] = "SalesHistory";
     Layout = "/Views/Shared/farmheader.cshtml";
@@ -15,6 +14,8 @@
             <th>Customer Name</th>
             <th>Customer Email</th>
             <th>Products</th>
+            <th>Order Status</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -22,18 +23,44 @@
         {
             <tr>
                 <td>@order.OrderHeader.Id</td>
-                <td>@order.OrderHeader.OrderDate</td>
+                <td>@order.OrderHeader.OrderDate.ToString("dd MMM yyyy")</td>
                 <td>@order.OrderHeader.User.UserName</td>
                 <td>@order.OrderHeader.User.Email</td>
                 <td>
                     <ul>
                         @foreach (var detail in order.OrderDetails)
                         {
-                            <li>@detail.Product.Name - @detail.Count x @detail.Price</li>
+                            <li>@detail.Product.Name - @detail.Count x @detail.Price.ToString("c")</li>
                         }
                     </ul>
                 </td>
+                <form asp-action="UpdateOrderStatus" method="post">
+                <td>
+                    
+                        <input type="hidden" name="orderId" value="@order.OrderHeader.Id" />
+                        <select name="status" class="form-control order-status" data-status="@order.OrderHeader.OrderStatus">
+                            <option value="PlacedOrder">Placed Order</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Delivered">Delivered</option>
+                        </select>
+                </td>
+                <td>
+                        <button type="submit" class="btn btn-primary">Update Status</button>
+                    
+                </td>
+                </form>
             </tr>
         }
     </tbody>
 </table>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var statusDropdowns = document.querySelectorAll(".order-status");
+        statusDropdowns.forEach(function(dropdown) {
+            var status = dropdown.getAttribute("data-status");
+            dropdown.value = status;
+        });
+    });
+</script>

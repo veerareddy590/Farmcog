@@ -1,8 +1,82 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<Product>
+@{
+    ViewData["Title"] = "Customer Home";
+    Layout = "/Views/Shared/_CustomerLayout.cshtml";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- Hero Section -->
+<div class="hero-section text-center py-5" style="background-image: url('/Images/Farmer_background.jpg'); background-size: cover; background-position: center;">
+    <div class="container">
+        <h1 class="display-4 text-white fw-bold">Welcome to FarmOnline</h1>
+        <p class="lead text-white fs-4">"Fresh produce, straight from the farm to your table."</p>
+        <a href="#products" class="btn btn-success btn-lg mt-3">Explore Products</a>
+    </div>
 </div>
+
+<!-- Products Section -->
+<div class="container mt-5" id="products">
+    <h2 class="text-center mb-4 fw-bold">Our Products</h2>
+    <div class="row g-4 pb-3">
+        @foreach (var product in Model)
+        {
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <img src="@product.Image" class="card-img-top rounded-top" alt="@product.Name" style="height: 200px; object-fit: cover;" />
+                    <div class="card-body">
+                        <h5 class="card-title text-dark fw-bold">@product.Name</h5>
+                        <p class="card-text text-muted">@product.Description</p>
+                        <p class="card-text text-success fw-bold">@product.Price.ToString("c")</p>
+                        <form asp-controller="Customer" asp-action="Cart" method="post" class="d-grid">
+                            <input type="hidden" name="productId" value="@product.ProductId" />
+                            <button type="submit" class="btn btn-success btn-sm">
+                               BuyNow
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Custom CSS -->
+<style>
+    .hero-section {
+        height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(0, 0, 0, 0.5); /* Overlay to improve text readability */
+        background-blend-mode: multiply;
+    }
+
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-section p {
+            font-size: 1.75rem;
+            font-style: italic;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+    .btn-success {
+        background-color: #28a745;
+        border: none;
+    }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+</style>
